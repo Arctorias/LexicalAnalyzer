@@ -1,0 +1,161 @@
+{
+  "name" : "continue",
+  "states" :
+  {
+    "q0":
+    {
+      "initial"     : true,
+      "final"       : false,
+      "productions" :
+      {
+          "c" : "q1"
+      }
+    },
+    "q1":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "o" : "q2"
+      }
+    },
+    "q2":
+    {
+      "initial"     : true,
+      "final"       : false,
+      "productions" :
+      {
+          "n" : "q3"
+      }
+    },
+    "q3":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "t" : "q4"
+      }
+    },
+    "q4":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "i" : "q5"
+      }
+    },
+    "q5":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "n" : "q6"
+      }
+    },
+    "q6":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "u" : "q7"
+      }
+    },
+    "q7":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "e" : "q8"
+      }
+    },
+    "q8":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "<letter>" : "q8",
+          "("        : "q9"
+      }
+    },
+    "q9":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "<arg>"  : "q10",
+          ")"      : "q12"
+      }
+    },
+    "q10":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          ")"        : "q12",
+          ","        : "q11"
+      }
+    },
+    "q11":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "<arg>" : "q10"
+      }
+    },
+    "q12":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "{"    : "q13"
+      }
+    },
+    "q13":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+        "<cmd>" : "q14"
+      }
+    },
+    "q14":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+          "<cmd>"    : "q14",
+          "}"        : "q15",
+          "<return>" : "q16"
+      }
+    },
+    "q15":
+    {
+      "initial"     : false,
+      "final"       : true,
+      "productions" : {}
+    },
+    "q16":
+    {
+      "initial"     : false,
+      "final"       : false,
+      "productions" :
+      {
+        "}" : "q15"
+      }
+    }
+  }
+}
