@@ -20,8 +20,8 @@ OUTPUT_PATH                = _dirname+"output/"
 
 if __name__ == "__main__":
     
-    lexemes_input_handler = LexemesInputHandler(LEXEMES_AUTOMATA_PATH, AVAILABLE_LEXEMES_AUTOMATA)
-    lexemes               = lexemes_input_handler.get_lexemes()
+    # lexemes_input_handler = LexemesInputHandler(LEXEMES_AUTOMATA_PATH, AVAILABLE_LEXEMES_AUTOMATA)
+    # lexemes               = lexemes_input_handler.get_lexemes()
 
     print("reading input")
     user_input_handler    = UserInputHandler(INPUT_PATH)

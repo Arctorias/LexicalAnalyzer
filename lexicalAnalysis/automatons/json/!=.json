@@ -7,10 +7,18 @@
         "final"   : false,
         "productions" :
         {
-            ">" : "!="
+            "!" : "!="
         }
       },
       "<!=>-q1" :
+      {
+        "initial" : false,
+        "final"   : false,
+        "productions" :
+        {
+            "=" : "q2"
+        }
+      },"<!=>-q2" :
       {
         "initial" : false,
         "final"   : true,

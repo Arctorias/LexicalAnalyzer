@@ -38,8 +38,11 @@ class Abstraction:
         return self._states[name]
     
     def initial_state(self):
-        name = self.format_state_name("q0")
-        return self._states[name]
+        try:
+            name = self.format_state_name("q0")
+            return self._states[name]
+        except KeyError:
+            name = self.format_state_name("q0")
 
     def format_state_name(self, state_name):
         return "<"+self._name+">-"+state_name

@@ -1,24 +1,25 @@
 {
-    "name" : ">=",
+    "name" : "++",
     "states" : {
-      "<<=>-q0" :
+      "<++>-q0" :
       {
         "initial" : true,
         "final"   : false,
         "productions" :
         {
-            ">" : "q1"
+          "+" : "q1"
         }
       },
-      "<<=>-q1" :
+      "<++>-q1" :
       {
         "initial" : false,
         "final"   : false,
         "productions" :
         {
-            "=" : "q2"
+          "+" : "q2"
         }
-      },"<<=>-q2" :
+      },
+      "<++>-q2" :
       {
         "initial" : false,
         "final"   : true,
