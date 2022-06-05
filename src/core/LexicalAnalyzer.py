@@ -1,3 +1,5 @@
+from collections import deque
+from contextlib import nullcontext
 import copy
 
 DEL    = "del"
@@ -164,3 +166,113 @@ class LexicalAnalyzer:
             #dealing with identifiers
             self._found_tokens[ID].append(word)
             return [ID, word]
+
+#Code for converting NFA into DFA. Other than the conversion method, there also is a Class for an Automaton,
+#wich has two methods, one fwich cheks if a Automata is NFA (isNFA) and one that rename the automata states (rename_automata_states)
+class Automaton():
+
+    def _init_(self, alphabet = set(), states= set(), initial_state = None, final_states = dict(), transitions = {}):
+        self.alphabet = alphabet
+        self.states = states
+        self.initial_state = initial_state
+        self.final_states = final_states
+        self,transitions = transitions
+
+    def is_nfa(self):
+        return any(a =='&' or len(t) > 1 for (_,a),t in self.transitions.items())
+
+    def rename_automata_states(self, i = 0):
+        #Checks if its necessary to rename states
+        new_state_names = range(i, i+len(self.states))
+        new_state_names_set = set(new_state_names)
+        if self.states == new_state_names_set : return
+        
+        #Executes a BFS from the inital state, storing the new names for each states
+        state_names = {self.initial_state:i}
+        i += 1
+        queue = deque([self.initial_state])
+        while queue:
+            s = queue.popleft()
+            for a in self.alphabet:
+                state_transitions = self.transitions.get((s,a), {})
+                if isinstance(state_transitions,frozenset):
+                    state_transitions ={state_transitions}
+                for t in state_transitions:
+                    if t not in state_names:
+                        state_names[t] =i
+                        i += 1
+                        queue.append(t)
+
+        #Updates the names of the states and th transitions on the automata
+        self.states = new_state_names_set
+        self.initial_state = state_names.get(self.initial_state)
+        self.final_states = {state_names.get(final_state):_ for final_state, _ in self.final_states.items}
+        
+        new_transitions = {}
+        for(s,a),t in self.transitions.items():
+            new_transitions[(state_names.get(s),a)] = state_names.get(t) if isinstance(t, frozenset)\
+                else {state_names.get(u) for u in t}
+        self.transitions = new_transitions
+
+#Conversion from NFA to DFA (Algorithm 3.2 from Aho's book)
+def nfa_to_dfa(nfa):
+     #Check if conversion is necessary
+    if not nfa.is_nfa(): return
+    
+    #Computes the set of states from an NFA reachable from a 's' state in a set 'T' using only epsilon transitions
+    def epsilon_closure(T):
+        if isinstance(T, int): #Checks if its epsilon_closure(s), first operation on figure 3.31 from Aho's books
+            stack = [T]
+            e_closure = {T}
+        else: #Continues as epsilon_closure(T), second operation on figure 3.31 from Aho's books
+            stack = list(T)
+            e_closure =T
+        while stack: #Computing epsilon_closure(T), fig 3.33 from Aho's book
+            t = stack.pop()
+            for u in nfa.transitions.get((t,'&'), {}): # & is a stand-in for epsilon
+                if u not in e_closure:
+                    e_closure.add(u)
+                    stack.append(u)
+        return frozenset(e_closure) # End of fig 3.33 code. It uses frozenset object so it can be added to other sets without being altered I.E immutable
+
+        #Computes the set of states from an NFA reachable from a 's' state in a set 'T' using transitions on input symbol 'a'
+        #third operation on figure 3.31 from Aho's books
+    def move(T,a):
+        mov =set()
+        if isinstance(T, int):
+                T={T}
+        for t in T:
+            u = nfa.transitions.get((t,a), {})
+            if u:
+                mov.update(u)
+        return mov
+
+    new_deterministic_initial_state = epsilon_closure(nfa.init_state)
+    new_deterministic_final_states = dict()
+    new_deterministic_states = {new_deterministic_initial_state}
+    new_deterministic_transitions = dict()
+
+    # Constructs subset of new states and transitions, figure 3.32 from Aho's book
+    marked = set()
+    while marked != new_deterministic_states:
+        T = (new_deterministic_states - marked).pop
+        marked.add(T)
+        for a in nfa.alphabet - {'&'}: # & is a stand-in for epsilon
+            u = epsilon_closure(move(T,a))
+            new_deterministic_states.add(u)
+            new_deterministic_transitions[(T,a)] = {u} # End of fig 3.32 code.
+
+    # Constructs subset of new final states
+    for s in new_deterministic_states:
+        t = s & nfa.final_states.keys()
+        if t:
+            new_deterministic_final_states[s] = set()
+            for u in t:
+                new_deterministic_final_states[s].add(nfa.final_states[u])
+
+    dfa = Automaton(nfa.alphabet, new_deterministic_states, new_deterministic_initial_state, new_deterministic_transitions, new_deterministic_final_states)
+    dfa.rename_automata_states()
+    return dfa
+
+      
+
